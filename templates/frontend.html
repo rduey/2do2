@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+      <!-- Icon -->
+      <link rel="icon" type="image/x-icon" href="../images/logo.png">
+      <!-- Bootstrap CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+      <link rel="stylesheet" href="../static/style.css">
+      <link href="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js" integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
+      <link rel="shortcut icon" href="#">
+      <script type="text/javascript" src="../static/lib/jquery-3.6.0.js"></script>
+      <script type="text/javascript" src="../static/lib/jquery-ui.js"></script>
+      <meta charset="utf-8" />
+      <meta
+        name="description"
+        content="In 2do^2, user can add items and subitems to their todo li   st to keep track of their incoming deadlines"
+      />
+      <meta
+        name="keywords"
+        content="calender,todo list tracker,deadline,school,work,jobs,need-to-do"
+      />
+      <meta name="renderer" content="webkit" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="spm_prefix" content="333.1007" />
+      <meta name="referrer" content="no-referrer-when-downgrade" />
+      <meta name="applicable-device" content="pc">
+      <meta http-equiv="Cache-Control" content="no-transform" />
+      <meta http-equiv="Cache-Control" content="no-siteapp" />
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>2Do&#178; - ToDo Task Tracker</title>
+  </head>
+  <body>
+    <script src="https://raw.githack.com/SortableJS/Sortable/master/Sortable.js"></script>
+
+    <!-- Page Title -->
+    <div id="display_name" class="container-fluid">
+      <h2>
+        2Do&#178; - ToDo Task Tracker
+      </h2>
+    </div>
+    
+    <!-- View of Tasks -->
+    <div id="body" class="container-fluid">
+      <!-- Tab Navigation -->
+      <nav>
+        <div class="nav nav-tabs justify-content-left" role="tablist">
+          <button class="nav-link active col" data-bs-toggle="tab" data-bs-target="#tab-list" type="button" role="tab">List View</button>
+          <button class="nav-link col" data-bs-toggle="tab" data-bs-target="#tab-queue" type="button" role="tab">Due Date View</button>
+          <button class="nav-link disabled col-5"></button>
+          <a class="nav-link col btn" href="/logout" type="button" role="tab">Log Out</a>
+        </div>
+      </nav>
+      <div class="d-grid">
+        <button id="add-root" class="btn btn-success" type="button" data-bs-toggle="modal" data-bs-target="#addModal">Add</button>
+      </div>
+      <div class="tab-content">
+        <!-- List View -->
+        <div id="tab-list" class="tab-pane fade show active" role="tabpanel">
+          <div id="root" class="list-group tree">
+          </div>
+        </div>
+        <!-- Queue View -->
+        <div id="tab-queue" class="tab-pane fade show" role="tabpanel">
+          <div id="queue" class="list-group">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task List Template -->
+    <template id="task-list-template">
+      <div id="issaId" class="list-group-item" style draggable="false">
+        <button id="menu" class="btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <svg style="width:20px;height:20px" viewBox="0 0 20 20">
+            <path fill="currentColor" d="M1,4 H18 V6 H1 V4 M1,9 H18 V11 H1 V7 M3,14 H18 V16 H1 V14" />
+          </svg>
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="menu">
+          <li>
+            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#addModal">
+            Add
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item" onclick="deleteList(event)">Delete</button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal">
+              Edit
+            </button>
+          </li>
+          <li>
+            <button type="button" class="dropdown-item" onclick="showTask(event)" data-bs-toggle="modal" data-bs-target="#showModal">
+              Show Info
+            </button>
+          </li>
+        </ul>
+        <a href="#issaLink" class="tree-button fs-normal" data-bs-toggle="collapse"><span class="text-muted fs-6">&nbsp;&nbsp;</span></a>
+        <div id="issaLink" class="list-group tree collapse"></div>
+      </div>
+    </template>
+
+    <!-- Queue Task Template -->
+    <template id="queue-template">
+      <li id="issaId" class="list-group-item"><span class="text-muted fs-6">&nbsp;&nbsp;</span></li>
+    </template>
+
+    <!-- Add Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" aria-labelledby="addModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addModalLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/action_page.php" class="form-container">
+              <div class="mb-3">
+                <label for="title" class="form-label"><b>Title</b></label>
+                <input id="titleAddInput" type="text" class="form-control" placeholder="Enter title" name="title" required>
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label"><b>Description</b></label>
+                <input id="descAddInput" type="text" class="form-control" placeholder="Enter description" name="description" required>
+              </div>
+              <div class="mb-3"> 
+                <label for="target" class="form-label"><b>Target Date</b></label>
+                <input id="targetAddInput" type="date" class="form-control" placeholder="Enter target date" name="target" required>
+              </div>
+              <div class="mb-3">
+                <label for="due-date" class="form-label"><b>Due Date</b></label>
+                <input id="dueAddInput" type="date" class="form-control" placeholder="Enter due date" name="due-date" required>
+              </div>
+              <div class="mb-3">
+                <label for="late-date" class="form-label"><b>Late Date</b></label>
+                <input id="lateAddInput" type="date" class="form-control" placeholder="Enter late date" name="late-date" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="add" type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form action="/action_page.php" class="form-container">
+              <div class="mb-3">
+                <label for="title" class="form-label"><b>Title</b></label>
+                <input id="titleEditInput" type="text" class="form-control" placeholder="Enter title" name="title" required>
+              </div>
+              <div class="mb-3">
+                <label for="description" class="form-label"><b>Description</b></label>
+                <input id="descEditInput" type="text" class="form-control" placeholder="Enter description" name="description" required>
+              </div>
+              <div class="mb-3"> 
+                <label for="target" class="form-label"><b>Target Date</b></label>
+                <input id="targetEditInput" type="date" class="form-control" placeholder="Enter target date" name="target" required>
+              </div>
+              <div class="mb-3">
+                <label for="due-date" class="form-label"><b>Due Date</b></label>
+                <input id="dueEditInput" type="date" class="form-control" placeholder="Enter due date" name="due-date" required>
+              </div>
+              <div class="mb-3">
+                <label for="late-date" class="form-label"><b>Late Date</b></label>
+                <input id="lateEditInput" type="date" class="form-control" placeholder="Enter late date" name="late-date" required>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button id="edit" type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Show Modal -->
+    <div class="modal fade" id="showModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="editModalLabel">Task Information</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div id="show-title">Title: <span></span></div>
+            <div id="show-due">Due Date: <span></span></div>
+            <div id="show-target">Target Date: <span></span></div>
+            <div id="show-late">Late Date: <span></span></div>
+            <div id="show-desc">Description: <span></span></div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../static/Tree.js"></script>
+    <script src="../static/script.js"></script>
+    <!-- Bootstrap JS with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>

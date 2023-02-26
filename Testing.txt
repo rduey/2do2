@@ -1,0 +1,22 @@
+Testing:
+2do2
+
+Sprint 1:
+As we did not manage to achive minium viable product in sprint 1, there was no user testing
+Backend components were tested manually.
+The database class was unit tested using test-db.py to test specfic functions by manually calling them with test data and viewing the database output
+The server class was 'pseduo unit tested' (functional testing with db, but single item tested at a time) using test-server.py
+
+Sprint 2: 
+In sprint 2, the frontend became functional so we started testing parts of it manually, such as adding an item to the list.
+Since the list display functionalty was not fully implemented, we used the test-server.py script to verify the effects of adding, etc
+
+Sprint 3:
+In sprint 3, we transisioned to full manual testing. Since we had fully achieved minium viable product, we switched to running feature tests manually.
+Regression tests were also run manually on the operating product. 
+An attempt was made to implement automatic unit testing via pytest, but it failed.
+
+Unit:
+test-db.py script was used to manually unit test the database
+test-server.py was used to pseudo-unit test the server
+We attempted to create proper automatic unit testing using pytest, but ran into signficant issues with how pytest called the database access and abandoned it

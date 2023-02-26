@@ -1,0 +1,22 @@
+Working Prototype Known Problems Report
+2do2
+
+Known bugs:
+- Attempting to create an account and failing, then attempting to login does not work without manually navigating to /login
+- Add and update form's autoload with previous form entries instead of the info of the item you are editing
+- Create account form collapses on failed attempt
+- Favacon image (tab icon) does not load)
+- Deleting last task in an account can rarely block add form from working (seems to be chain of events?)
+- Dragging to re-order does not save in new order
+- Update cannot nullify a field
+
+Acceptance testing user stories:
+As a user I want to be able to
+- create an account
+- log out of my account
+- log into my account
+- add tasks and subtasks
+- edit tasks
+- view subtasks
+- delete subtasks
+- sort tasks by date
