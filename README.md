@@ -1,6 +1,7 @@
 # 2do<sup>2</sup>
 ## Screenshots
-
+![Overview](2do_overview.png) ![Options](2do_options.png)
+![Menu](2do_menu.png)
 ## Installation
 To install 2do2, first install all python dependencies using pip
 
