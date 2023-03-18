@@ -1,4 +1,7 @@
+# 2do<sup>2</sup>
+## Screenshots
 
+## Installation
 To install 2do2, first install all python dependencies using pip
 
 `$ pip3 install Flask Flask_Session peewee bcrypt requests`
